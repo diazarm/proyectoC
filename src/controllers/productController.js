@@ -21,9 +21,9 @@ const getCategories = async (req, res) => {
 }
 
 //relacionado con GET
-const getProducts = async (req, res) => {
+const traemeLasbebidas = async (req, res) => {
     const { name } = req.query;
-    console.log(req.query);
+  //  console.log("mira ceci este es mi query",req.query);
 
     try {
         if (!name) {
@@ -36,6 +36,10 @@ const getProducts = async (req, res) => {
         } else {
             const regexName = new RegExp(name, 'i'); // 'i' indica que la búsqueda sea insensible a mayúsculas y minúsculas
             const products = await Product.find({ name: { $regex: regexName } });
+            // if(!products){
+            //     res.json({msj : "tu producto no lo tenemos"})
+                
+            // }
             res.json({
                 success: true,
                 msg: "Productos buscados",
@@ -157,4 +161,4 @@ const reduceStock = async (req, res) => {
 }
 
 
-module.exports = { getCategories, getProducts, getProductById, createProduct, editProduct, deleteProduct, reduceStock }
+module.exports = { getCategories, traemeLasbebidas, getProductById, createProduct, editProduct, deleteProduct, reduceStock }

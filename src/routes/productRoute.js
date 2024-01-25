@@ -1,5 +1,5 @@
 const express = require('express');
-const { getProducts,
+const { traemeLasbebidas,
     getProductById,
     createProduct,
     editProduct,
@@ -11,7 +11,7 @@ const productRouter = express.Router();
 
 
 productRouter.route("/products")
-    .get(getProducts);
+    .get(traemeLasbebidas);
 
 productRouter.route("/product")
     .post(createProduct); 
