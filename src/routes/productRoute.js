@@ -10,7 +10,7 @@ const { getProducts,
 const productRouter = express.Router();
 
 
-productRouter.route("/product")
+productRouter.route("/products")
     .get(getProducts);
 
 productRouter.route("/product")

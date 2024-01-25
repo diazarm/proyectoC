@@ -6,7 +6,7 @@ const {Category} = require("../models/Product")
 // traer la categoría de productos con GETCategory
 const getCategories = async (req, res) => {
     try {
-        const Categories = await Categories.find();
+        const Categories = await Category.find();
         res.json({ 
             success: true, 
             msg: "Lista de Categorías", 
@@ -22,33 +22,44 @@ const getCategories = async (req, res) => {
 
 //relacionado con GET
 const getProducts = async (req, res) => {
-    try {
-        const products = await Product.find();
-        res.json({ 
-            success: true, 
-            msg: "Lista de productos", 
-            info: products 
-        })
-    } catch (error) {
-        res.json({ 
-            success: false, 
-            msg: error.message 
-        })
-    }
-}
+    const { name } = req.query;
+    console.log(req.query);
 
+    try {
+        if (!name) {
+            const products = await Product.find();
+            res.json({
+                success: true,
+                msg: "Lista de todos los productos",
+                info: products
+            });
+        } else {
+            const regexName = new RegExp(name, 'i'); // 'i' indica que la búsqueda sea insensible a mayúsculas y minúsculas
+            const products = await Product.find({ name: { $regex: regexName } });
+            res.json({
+                success: true,
+                msg: "Productos buscados",
+                info: products
+            });
+        }
+    } catch (error) {
+        res.json({
+            success: false,
+            msg: error.message
+        });
+    }
+};
 
 
 //relacionado con GET
 const getProductById = async (req, res) => {
+    const { id } = req.params
     try {
-        const { id } = req.param
         const product = await Product.findById(id);
-
         res.json({ 
             success: true, 
             msg: "Se ha cargado el producto", 
-            product 
+            producto: product 
         })
     } catch (error) {
         res.status(500).json({ 
@@ -62,9 +73,11 @@ const getProductById = async (req, res) => {
 //relacionado con POST
 
 const createProduct = async (req, res) => {
-       const {sku, name, price, image, stock} = req.body;
+    const {sku, name, price, image, details, stock} = req.body;
     try {
-        const  newProduct =  await conntrollerProduct(sku,name,price,image,stock);   
+        const newProduct = new Product({sku, name, price, image, details, stock});
+        await newProduct.save();
+
         res.json({
             sucess: true,
             msg: "Se ha creado el producto!",
@@ -77,18 +90,6 @@ const createProduct = async (req, res) => {
         })
     }
 }
-
-//? Aqui el controller 
-const conntrollerProduct = async(sku,name,price,image,stock) =>{
-        const newProduct = new Product({sku,name,price,image,stock});
-            await newProduct.save();
-    }
-
-
-
-
-
-
 
 
 
@@ -154,5 +155,6 @@ const reduceStock = async (req, res) => {
         res.status(500).json({ success: false, message: error.message })
     }
 }
+
 
 module.exports = { getCategories, getProducts, getProductById, createProduct, editProduct, deleteProduct, reduceStock }
